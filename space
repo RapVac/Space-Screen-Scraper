@@ -1,0 +1,34 @@
+#!/bin/bash
+
+
+cd ~/.immune/
+
+
+if [ $(date +%H) -lt 12 ]; then
+	echo "Good morning" $USER
+elif [ $(date +%H) -ge 18 ]; then
+	echo "Good evening" $USER
+else
+	echo "Good afternoon" $USER
+fi
+
+wget -qO space.html https://spaceflightnow.com/launch-schedule/
+echo "Today is" $(date)
+echo "(" $(TZ="GMT" date +%r\ %Z) ")"
+
+echo -e "\n"
+m=$(date +%B)
+
+if [ $(expr length $m) -gt 5 ]; then
+	x=$(date +%b\.\ %-d)
+else
+	x=$(date +%B\ %-d)
+fi
+sleep 1
+echo -e "Today's launches are:\n---------------------------------"
+cat space.html | grep "$x" | grep -o -P '(?<=\<span\ class=\"mission\"\>).*(?=\</span\>)'
+#cat ~/space.html | grep -A 2 "$(date +%b.\ %d)" | grep -o -P "(?<=Launch\ time:\<\/span\>).*(?=\<span)"
+
+
+rm ~/.immune/space.html
+exit 0
